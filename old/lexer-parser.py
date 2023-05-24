@@ -107,7 +107,7 @@ class Parser:
         self.eat('SEMICOLON')
 
 # get content from test.own
-tokens = lexer(open('test.txt').read())
+tokens = lexer(open('old/test.txt').read())
 parser = Parser(tokens)
 parser.parse()
 print(parser.symbols)
