@@ -1,5 +1,0 @@
-var x = 5;
-
-func foo() {
-  return x;
-}
