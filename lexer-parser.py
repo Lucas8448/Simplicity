@@ -60,7 +60,25 @@ class Parser:
             'product': lambda x, y: x * y,
             'quotient': lambda x, y: x / y,
             'square': lambda x: x ** 2,
+            'sqrt': lambda x: x ** 0.5,
+            'sin': lambda x: math.sin(x),
+            'cos': lambda x: math.cos(x),
+            'tan': lambda x: math.tan(x),
+            'log': lambda x: math.log(x),
+            'exp': lambda x: math.exp(x),
+            'floor': lambda x: math.floor(x),
+            'ceil': lambda x: math.ceil(x),
+            'round': lambda x: round(x),
+            'abs': lambda x: abs(x),
+            'max': lambda x, y: max(x, y),
+            'min': lambda x, y: min(x, y)
         }
+        self.values = {
+            'pi': math.pi,
+            'e': math.e,
+            'g': 9.81,
+        }
+
 
     def eat(self, token_type):
         if self.pos < len(self.tokens) and self.tokens[self.pos][0] == token_type:
@@ -153,12 +171,15 @@ class Parser:
                 identifier = self.tokens[self.pos][1]
                 if identifier in self.symbols:
                     value = self.symbols[identifier]
+                elif identifier in self.values:  # check if it's a constant value
+                    value = self.values[identifier]
                 else:
                     raise Exception(f'Undefined identifier: {identifier}')
                 self.eat('IDENTIFIER')
         else:
             raise Exception(f'Invalid expression: {self.tokens[self.pos]}')
         return value
+
 
     def return_statement(self):
         self.eat('KEYWORD')  # return
@@ -220,4 +241,3 @@ class Parser:
 tokens = lexer(open('test.txt').read())
 parser = Parser(tokens)
 parser.parse()
-print(parser.symbols)
