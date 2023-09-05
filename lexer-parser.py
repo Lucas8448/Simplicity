@@ -27,6 +27,33 @@ OPERATORS = {
     '^': lambda x, y: x ** y,
 }
 
+KNOWN_KEYWORDS_FUNCTIONS = [
+    'var', 'func', 'return', 'print', 
+    'sum', 'difference', 'product', 'quotient', 
+    'square', 'sqrt', 'sin', 'cos', 'tan', 'log', 
+    'exp', 'floor', 'ceil', 'round', 'abs', 'max', 
+    'min', 'and', 'or', 'not'
+]
+
+def levenshtein_distance(s1, s2):
+    if len(s1) > len(s2):
+        s1, s2 = s2, s1
+
+    distances = range(len(s1) + 1)
+    for i2, c2 in enumerate(s2):
+        distances_ = [i2+1]
+        for i1, c1 in enumerate(s1):
+            if c1 == c2:
+                distances_.append(distances[i1])
+            else:
+                distances_.append(1 + min((distances[i1], distances[i1 + 1], distances_[-1])))
+        distances = distances_
+    return distances[-1]
+
+def closest_match(token, known_keywords_functions):
+    closest_token = min(known_keywords_functions, key=lambda t: levenshtein_distance(token, t))
+    return closest_token
+
 def lexer(input):
     pos = 0
     tokens = []
@@ -44,8 +71,13 @@ def lexer(input):
                 break
         
         if not match:
-            print(f'Invalid character at position {pos}')
-            break
+            start = pos
+            while pos < len(input) and not input[pos].isspace():
+                pos += 1
+            unrecognized_token = input[start:pos]
+            suggestion = closest_match(unrecognized_token, KNOWN_KEYWORDS_FUNCTIONS)
+            print(f'Unrecognized token "{unrecognized_token}" at position {start}. Did you mean "{suggestion}"?')
+            return tokens  # Return the tokens we have so far
 
     return tokens
 
@@ -71,7 +103,11 @@ class Parser:
             'round': lambda x: round(x),
             'abs': lambda x: abs(x),
             'max': lambda x, y: max(x, y),
-            'min': lambda x, y: min(x, y)
+            'min': lambda x, y: min(x, y),
+            'and': lambda x, y: x and y,
+            'or': lambda x, y: x or y,
+            'not': lambda x: not x,
+            
         }
         self.values = {
             'pi': math.pi,
