@@ -1,31 +1,6 @@
-var a = 10;
-var b = 5;
+n = 0;
 
-print a + b; // Prints 15
-print a - b; // Prints 5
-print a * b; // Prints 50
-print a / b; // Prints 2
-
-func sum(x, y) {
-  return x + y;
+for i = 1 to 64 {
+    n = n + 2^i;
+    print n;
 }
-
-func difference(x, y) {
-  return x - y;
-}
-
-func product(x, y) {
-  return x * y;
-}
-
-func quotient(x, y) {
-  return x / y;
-}
-
-print sum(a, b); // Prints 15
-print difference(a, b); // Prints 5
-print product(a, b); // Prints 50
-print quotient(a, b); // Prints 2
-
-var p = 2;
-var q = 3;

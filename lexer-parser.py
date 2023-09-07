@@ -4,7 +4,7 @@ import math
 
 TOKEN_TYPES = [
     ('COMMENT', r'//.*'),
-    ('KEYWORD', r'\b(var|func|return|print)\b'),
+    ('KEYWORD', r'\b(var|func|return|print|for|to)\b'),
     ('IDENTIFIER', r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
     ('OPERATOR', r'[=+\-/*<>!&|^]'),
     ('INTEGER', r'\b\d+\b'),
@@ -138,20 +138,22 @@ class Parser:
                 return self.return_statement()
             elif self.tokens[self.pos][1] == 'print':
                 self.print_statement()
+            elif self.tokens[self.pos][1] == 'for':
+                self.for_loop()
         elif self.tokens[self.pos][0] == 'IDENTIFIER':
             self.assignment()
 
     def var_declaration(self):
-        self.eat('KEYWORD')  # var
+        self.eat('KEYWORD')
         identifier = self.tokens[self.pos][1]
         self.eat('IDENTIFIER')
-        self.eat('OPERATOR')  # =
+        self.eat('OPERATOR')
         value = self.expression()
         self.symbols[identifier] = value
         self.eat('SEMICOLON')
 
     def func_declaration(self):
-        self.eat('KEYWORD')  # func
+        self.eat('KEYWORD')
         identifier = self.tokens[self.pos][1]
         self.eat('IDENTIFIER')
         self.eat('LPAREN')
@@ -180,6 +182,46 @@ class Parser:
             value = OPERATORS[op](value, value2)
         return value
 
+    def for_loop(self):
+        self.eat('KEYWORD')
+        loop_var = self.tokens[self.pos][1]
+        self.eat('IDENTIFIER')
+        self.eat('OPERATOR')
+        start_val = self.expression()
+        self.eat('KEYWORD')
+        end_val = self.expression()
+        self.eat('LCURLY')
+        loop_body = []
+        while self.tokens[self.pos][0] != 'RCURLY':
+            loop_body.append(copy.deepcopy(self.tokens[self.pos]))
+            self.eat(self.tokens[self.pos][0])
+        self.eat('RCURLY')
+
+        for i in range(start_val, end_val + 1):
+            self.symbols[loop_var] = i
+            old_pos = self.pos
+            old_tokens = self.tokens
+            self.pos = 0
+            self.tokens = loop_body
+            self.parse()
+            self.pos = old_pos
+            self.tokens = old_tokens
+
+    def statement(self):
+        if self.tokens[self.pos][0] == 'KEYWORD':
+            if self.tokens[self.pos][1] == 'var':
+                self.var_declaration()
+            elif self.tokens[self.pos][1] == 'func':
+                self.func_declaration()
+            elif self.tokens[self.pos][1] == 'return':
+                return self.return_statement()
+            elif self.tokens[self.pos][1] == 'print':
+                self.print_statement()
+            elif self.tokens[self.pos][1] == 'for':
+                self.for_loop()
+        elif self.tokens[self.pos][0] == 'IDENTIFIER':
+            self.assignment()
+
     def term(self):
         value = self.factor()
         while self.pos < len(self.tokens) and self.tokens[self.pos][0] == 'OPERATOR' and self.tokens[self.pos][1] in '*/^':
@@ -207,7 +249,7 @@ class Parser:
                 identifier = self.tokens[self.pos][1]
                 if identifier in self.symbols:
                     value = self.symbols[identifier]
-                elif identifier in self.values:  # check if it's a constant value
+                elif identifier in self.values:
                     value = self.values[identifier]
                 else:
                     raise Exception(f'Undefined identifier: {identifier}')
@@ -218,13 +260,13 @@ class Parser:
 
 
     def return_statement(self):
-        self.eat('KEYWORD')  # return
+        self.eat('KEYWORD')
         value = self.expression()
         self.eat('SEMICOLON')
         return value
 
     def print_statement(self):
-        self.eat('KEYWORD')  # print
+        self.eat('KEYWORD')
         value = self.expression()
         print(value)
         self.eat('SEMICOLON')
@@ -241,7 +283,7 @@ class Parser:
         self.eat('RPAREN')
         if identifier not in self.functions:
             raise Exception(f'Undefined function: {identifier}')
-        if isinstance(self.functions[identifier], tuple):  # user-defined functions
+        if isinstance(self.functions[identifier], tuple):
             parameters, body = self.functions[identifier]
             if len(arguments) != len(parameters):
                 raise Exception(f'Argument mismatch for function: {identifier}')
@@ -256,7 +298,7 @@ class Parser:
             self.tokens = old_tokens
             self.symbols = old_symbols
             return result
-        else:  # built-in functions
+        else:
             func = self.functions[identifier]
             return func(*arguments)
 
@@ -264,7 +306,7 @@ class Parser:
     def assignment(self):
         identifier = self.tokens[self.pos][1]
         self.eat('IDENTIFIER')
-        self.eat('OPERATOR')  # =
+        self.eat('OPERATOR')
         value = self.expression()
         self.symbols[identifier] = value
         self.eat('SEMICOLON')
@@ -272,8 +314,6 @@ class Parser:
     def factorial(self, value):
         return math.factorial(value)
 
-
-# get content from test.own
 tokens = lexer(open('test.txt').read())
 parser = Parser(tokens)
 parser.parse()
