@@ -76,34 +76,4 @@
 
 ### Comment
 
-- Use `//` for single line comments
-
-## Example Code
-
-Here's a sample code that demonstrates some of the features:
-
-\```plaintext
-
-var x = 5;
-
-var y = 10;
-
-var z = sum(x, y);
-
-print z;
-
-func greet() {
-
-    print "Hello, World!";
-
-}
-
-greet();
-
-for i = 1 to 5 {
-
-    print i;
-
-}
-
-\```
+- Use `//` for single line comments 
