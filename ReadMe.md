@@ -4,9 +4,9 @@
 
 - `var`: For variable declaration
 
-- `func`: To define a function
+- `fun`: To define a funtion
 
-- `return`: To return a value from a function
+- `return`: To return a value from a funtion
 
 - `print`: To print a value to the console
 
@@ -24,7 +24,7 @@
 
 - `^` : Power
 
-### Built-in Functions
+### Built-in funtions
 
 - `sum(a, b)`: Addition
 
@@ -38,19 +38,19 @@
 
 - `sqrt(a)`: Square root
 
-- `sin(a)`: Sine function
+- `sin(a)`: Sine funtion
 
-- `cos(a)`: Cosine function
+- `cos(a)`: Cosine funtion
 
-- `tan(a)`: Tangent function
+- `tan(a)`: Tangent funtion
 
 - `log(a)`: Natural logarithm
 
-- `exp(a)`: Exponential function
+- `exp(a)`: Exponential funtion
 
-- `floor(a)`: Floor function
+- `floor(a)`: Floor funtion
 
-- `ceil(a)`: Ceiling function
+- `ceil(a)`: Ceiling funtion
 
 - `round(a)`: Round to the nearest integer
 
