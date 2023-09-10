@@ -4,7 +4,7 @@ import math
 
 TOKEN_TYPES = [
     ('COMMENT', r'//.*'),
-    ('KEYWORD', r'\b(var|fun|return|print|for|to)\b'),
+    ('KEYWORD', r'\b(var|func|return|print|for|to)\b'),
     ('IDENTIFIER', r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
     ('OPERATOR', r'[=+\-/*<>!&|^]'),
     ('INTEGER', r'\b\d+\b'),
@@ -27,8 +27,8 @@ OPERATORS = {
     '^': lambda x, y: x ** y,
 }
 
-KNOWN_KEYWORDS_funTIONS = [
-    'var', 'fun', 'return', 'print', 
+KNOWN_KEYWORDS_FUNCTIONS = [
+    'var', 'func', 'return', 'print', 
     'sum', 'difference', 'product', 'quotient', 
     'square', 'sqrt', 'sin', 'cos', 'tan', 'log', 
     'exp', 'floor', 'ceil', 'round', 'abs', 'max', 
@@ -50,8 +50,8 @@ def levenshtein_distance(s1, s2):
         distances = distances_
     return distances[-1]
 
-def closest_match(token, known_keywords_funtions):
-    closest_token = min(known_keywords_funtions, key=lambda t: levenshtein_distance(token, t))
+def closest_match(token, known_keywords_functions):
+    closest_token = min(known_keywords_functions, key=lambda t: levenshtein_distance(token, t))
     return closest_token
 
 def lexer(input):
@@ -75,7 +75,7 @@ def lexer(input):
             while pos < len(input) and not input[pos].isspace():
                 pos += 1
             unrecognized_token = input[start:pos]
-            suggestion = closest_match(unrecognized_token, KNOWN_KEYWORDS_funTIONS)
+            suggestion = closest_match(unrecognized_token, KNOWN_KEYWORDS_FUNCTIONS)
             print(f'Unrecognized token "{unrecognized_token}" at position {start}. Did you mean "{suggestion}"?')
             return tokens  # Return the tokens we have so far
 
@@ -86,7 +86,7 @@ class Parser:
         self.tokens = tokens
         self.pos = 0
         self.symbols = {}
-        self.funtions = {
+        self.functions = {
             'sum': lambda x, y: x + y,
             'difference': lambda x, y: x - y,
             'product': lambda x, y: x * y,
@@ -132,8 +132,8 @@ class Parser:
         if self.tokens[self.pos][0] == 'KEYWORD':
             if self.tokens[self.pos][1] == 'var':
                 self.var_declaration()
-            elif self.tokens[self.pos][1] == 'fun':
-                self.fun_declaration()
+            elif self.tokens[self.pos][1] == 'func':
+                self.func_declaration()
             elif self.tokens[self.pos][1] == 'return':
                 return self.return_statement()
             elif self.tokens[self.pos][1] == 'print':
@@ -152,7 +152,7 @@ class Parser:
         self.symbols[identifier] = value
         self.eat('SEMICOLON')
 
-    def fun_declaration(self):
+    def func_declaration(self):
         self.eat('KEYWORD')
         identifier = self.tokens[self.pos][1]
         self.eat('IDENTIFIER')
@@ -171,7 +171,7 @@ class Parser:
             body.append(copy.deepcopy(self.tokens[self.pos]))
             self.eat(self.tokens[self.pos][0])
         self.eat('RCURLY')
-        self.funtions[identifier] = (parameters, body)
+        self.functions[identifier] = (parameters, body)
 
     def expression(self):
         value = self.term()
@@ -211,8 +211,8 @@ class Parser:
         if self.tokens[self.pos][0] == 'KEYWORD':
             if self.tokens[self.pos][1] == 'var':
                 self.var_declaration()
-            elif self.tokens[self.pos][1] == 'fun':
-                self.fun_declaration()
+            elif self.tokens[self.pos][1] == 'func':
+                self.func_declaration()
             elif self.tokens[self.pos][1] == 'return':
                 return self.return_statement()
             elif self.tokens[self.pos][1] == 'print':
@@ -244,7 +244,7 @@ class Parser:
                 raise Exception(f'Invalid expression: {self.tokens[self.pos]}')
         elif self.tokens[self.pos][0] == 'IDENTIFIER':
             if self.tokens[self.pos+1][0] == 'LPAREN':
-                value = self.funtion_call()
+                value = self.function_call()
             else:
                 identifier = self.tokens[self.pos][1]
                 if identifier in self.symbols:
@@ -271,7 +271,7 @@ class Parser:
         print(value)
         self.eat('SEMICOLON')
 
-    def funtion_call(self):
+    def function_call(self):
         identifier = self.tokens[self.pos][1]
         self.eat('IDENTIFIER')
         self.eat('LPAREN')
@@ -281,12 +281,12 @@ class Parser:
             if self.tokens[self.pos][0] == 'COMMA':
                 self.eat('COMMA')
         self.eat('RPAREN')
-        if identifier not in self.funtions:
-            raise Exception(f'Undefined funtion: {identifier}')
-        if isinstance(self.funtions[identifier], tuple):
-            parameters, body = self.funtions[identifier]
+        if identifier not in self.functions:
+            raise Exception(f'Undefined function: {identifier}')
+        if isinstance(self.functions[identifier], tuple):
+            parameters, body = self.functions[identifier]
             if len(arguments) != len(parameters):
-                raise Exception(f'Argument mismatch for funtion: {identifier}')
+                raise Exception(f'Argument mismatch for function: {identifier}')
             old_pos = self.pos
             old_tokens = self.tokens
             old_symbols = copy.deepcopy(self.symbols)
@@ -299,8 +299,8 @@ class Parser:
             self.symbols = old_symbols
             return result
         else:
-            fun = self.funtions[identifier]
-            return fun(*arguments)
+            func = self.functions[identifier]
+            return func(*arguments)
 
 
     def assignment(self):
