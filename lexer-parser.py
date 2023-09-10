@@ -314,6 +314,7 @@ class Parser:
     def factorial(self, value):
         return math.factorial(value)
 
-tokens = lexer(open('test.sp').read())
+
+tokens = lexer(open('test.sply').read())
 parser = Parser(tokens)
 parser.parse()
