@@ -6,7 +6,7 @@ TOKEN_TYPES = [
     ('COMMENT', r'//.*'),
     ('KEYWORD', r'\b(var|func|return|print|for|to)\b'),
     ('IDENTIFIER', r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
-    ('OPERATOR', r'[=+\-/*<>!&|^]'),
+    ('OPERATOR', r'[=+\-/*<>!&|^]+')
     ('INTEGER', r'\b\d+\b'),
     ('WHITESPACE', r'\s+'),
     ('NEWLINE', r'\n'),
@@ -24,7 +24,16 @@ OPERATORS = {
     '-': lambda x, y: x - y,
     '*': lambda x, y: x * y,
     '/': lambda x, y: x / y,
-    '^': lambda x, y: x ** y,
+    '<': lambda x, y: x < y,
+    '>': lambda x, y: x > y,
+    '<=': lambda x, y: x <= y,
+    '>=': lambda x, y: x >= y,
+    '==': lambda x, y: x == y,
+    '!=': lambda x, y: x != y,
+    '&': lambda x, y: x and y,
+    '|': lambda x, y: x or y,
+    '!': lambda x: not x,
+    '^': lambda x, y: x ** y
 }
 
 KNOWN_KEYWORDS_FUNCTIONS = [
