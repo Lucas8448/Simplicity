@@ -6,7 +6,7 @@ TOKEN_TYPES = [
     ('COMMENT', r'//.*'),
     ('KEYWORD', r'\b(var|func|return|print|for|to)\b'),
     ('IDENTIFIER', r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
-    ('OPERATOR', r'[=+\-/*<>!&|^]+')
+    ('OPERATOR', r'[=+\-/*<>!&|^]+'),
     ('INTEGER', r'\b\d+\b'),
     ('WHITESPACE', r'\s+'),
     ('NEWLINE', r'\n'),
@@ -215,21 +215,6 @@ class Parser:
             self.parse()
             self.pos = old_pos
             self.tokens = old_tokens
-
-    def statement(self):
-        if self.tokens[self.pos][0] == 'KEYWORD':
-            if self.tokens[self.pos][1] == 'var':
-                self.var_declaration()
-            elif self.tokens[self.pos][1] == 'func':
-                self.func_declaration()
-            elif self.tokens[self.pos][1] == 'return':
-                return self.return_statement()
-            elif self.tokens[self.pos][1] == 'print':
-                self.print_statement()
-            elif self.tokens[self.pos][1] == 'for':
-                self.for_loop()
-        elif self.tokens[self.pos][0] == 'IDENTIFIER':
-            self.assignment()
 
     def term(self):
         value = self.factor()
