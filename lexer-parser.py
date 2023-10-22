@@ -118,7 +118,7 @@ class Parser:
             'and': lambda x, y: x and y,
             'or': lambda x, y: x or y,
             'not': lambda x: not x,
-            
+            'pythagoras': lambda x, y: (x ** 2 + y ** 2) ** 0.5,
         }
         self.values = {
             'pi': math.pi,
