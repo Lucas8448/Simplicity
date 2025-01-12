@@ -123,7 +123,15 @@ class Parser:
         self.values = {
             'pi': math.pi,
             'e': math.e,
-            'g': 9.81,
+            'g': 9.80665, # at ground level
+            'u': 1.66*10^(-27), #kilograms
+            'bsk': 2*10^(-7), # biot-savart const
+            'ke': 8.99*10^9, # columb const
+            'ec': 1.602*10^(-19),
+            'gamma': 6.67*10^(-11),
+            'c': 299792458, # speed of light
+            'h': 6.63*10^(-34), # planck const
+            'B': 2.18*10^(-18)
         }
 
 
